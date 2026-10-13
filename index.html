@@ -3,19 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mizan Fit - ميزان فت</title>
+<title>Mizan Fit - ميزان فيت</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>body{font-family:'Cairo',sans-serif}</style>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ===== تقدر تغير دول في ثانية =====
-const SITE_PRICE = 150;
-const VODAFONE_CASH = "01032537361";
-const ADMIN_EMAIL = "mm1719087@gmail.com";
-
-// ===== الكونفج بتاعك جاهز =====
 const firebaseConfig = {
   apiKey: "AIzaSyDj8ZSUwIyqZf3IMHNpYckkeTv-WSoGaHc",
   authDomain: "mizan-fit-e5554.firebaseapp.com",
@@ -25,59 +21,94 @@ const firebaseConfig = {
   appId: "1:502932382370:web:bbf348f8a9bda1564fadfb"
 };
 
+const ADMIN_EMAIL = "mm1719087@gmail.com";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-window.loginAndCalc = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
+window.login = async () => {
+  try { await signInWithPopup(auth, provider); } 
+  catch(e){ alert("خطأ: " + e.message); }
+}
+window.logout = () => signOut(auth).then(()=>location.reload());
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user) {
+    document.getElementById('loginScreen').style.display='flex';
+    document.getElementById('appScreen').style.display='none';
+    return;
+  }
+  const userRef = doc(db, "users", user.uid);
+  let snap = await getDoc(userRef);
+  if(!snap.exists()){
+    await setDoc(userRef, {
+      email: user.email,
+      trialStart: serverTimestamp(),
+      subscribed: false,
+      calcDone: false,
+      plan: null
+    });
+    snap = await getDoc(userRef);
+  }
+  const data = snap.data();
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appScreen').style.display='block';
+  document.getElementById('uEmail').innerText = user.email;
+
+  if(data.calcDone === true && user.email !== ADMIN_EMAIL){
+    document.getElementById('calcArea').innerHTML = `
+      <div class="bg-red-50 border-2 border-red-200 p-8 rounded-2xl text-center">
+        <h2 class="text-2xl font-black text-red-600">انتهت تجربتك المجانية ✅</h2>
+        <p class="mt-3">حسابك حسب مرة واحدة بس. عشان تحسب تاني لازم تشترك.</p>
+        <a href="https://wa.me/201000000000" class="inline-block mt-5 bg-green-600 text-white px-6 py-3 rounded-xl">تواصل للاشتراك</a>
+        <button onclick="logout()" class="block mx-auto mt-4 text-sm underline">خروج</button>
+      </div>`;
+  }
+});
+
+window.calculate = async () => {
+  const user = auth.currentUser;
+  if(!user) return alert("سجل الاول");
+  if(user.email !== ADMIN_EMAIL){
     const userRef = doc(db, "users", user.uid);
     const snap = await getDoc(userRef);
-
-    if (!snap.exists()) {
-      await setDoc(userRef, {
-        email: user.email,
-        subscribed: false,
-        calcDone: false,
-        createdAt: serverTimestamp()
-      });
-    } else {
-      const data = snap.data();
-      // لو خلص المحاولة ومش مشترك ومش انت الأدمن -> اقفله
-      if (data.calcDone &&!data.subscribed && user.email!== ADMIN_EMAIL) {
-        document.getElementById('msg').innerHTML = `خلصت محاولتك المجانية يا بطل 💪<br>حول ${SITE_PRICE}ج على فودافون كاش ${VODAFONE_CASH} وابعت الوصل واتساب وهفتحلك الاشتراك فورا`;
-        return;
-      }
+    if(snap.exists() && snap.data().calcDone === true){
+      alert("انت حسبت قبل كده، حسابك اتقفل!");
+      return;
     }
-
-    // هنا هتحط حاسبة السعرات بتاعتك
-    alert("تمام! تسجيل الدخول نجح - هنا هنحط حاسبة السعرات");
-
-    const currentSnap = await getDoc(userRef);
-    if(!currentSnap.data().calcDone){
-      await updateDoc(userRef, { calcDone: true });
-    }
-
-  } catch (e) {
-    alert("خطأ: " + e.message);
+  }
+  // --- هنا بتعمل الحسبة بتاعتك ---
+  const weight = document.getElementById('weight').value;
+  if(!weight) return alert("دخل وزنك");
+  document.getElementById('result').innerHTML = `<div class="bg-green-100 p-4 rounded-xl font-bold">سعراتك: ${weight*33} سعر - تم حفظ النتيجة</div>`;
+  
+  if(user.email !== ADMIN_EMAIL){
+    const userRef = doc(db, "users", user.uid);
+    await updateDoc(userRef, { calcDone: true, plan: "free_trial_used" });
   }
 }
 </script>
 </head>
-<body class="bg-gray-50 p-4 font-sans">
-<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg mt-10 text-center">
-<h1 class="text-2xl font-bold mb-2">Mizan Fit</h1>
-<p class="mb-4 text-gray-600">احسب سعراتك مرة مجانا، وبعد كده الاشتراك <b id="price" class="text-black"></b> جنيه</p>
-<button onclick="loginAndCalc()" class="w-full bg-black text-white py-3 rounded-xl font-bold text-lg">احسب سعراتك بالجيميل</button>
-<p id="msg" class="mt-4 text-red-600 font-bold leading-6"></p>
-<p class="text-xs mt-4 text-gray-400">تسجيل دخول جوجل فقط - مفيش SMS - آمن 100%</p>
-<p class="text-[10px] mt-2 text-gray-300">Admin: mm1719087@gmail.com</p>
+<body class="bg-gray-50 min-h-screen">
+<div id="loginScreen" class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+  <h1 class="text-4xl font-black">MIZAN FIT</h1>
+  <p class="mt-2 text-gray-600">احسب سعراتك مرة واحدة مجانا</p>
+  <button onclick="login()" class="mt-8 bg-black text-white px-8 py-4 rounded-2xl font-bold text-lg flex items-center gap-3">
+    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6 bg-white rounded-full p-1"> سجل بجيميل و احسب
+  </button>
 </div>
-<script>
-document.getElementById('price').innerText = SITE_PRICE;
-</script>
+<div id="appScreen" style="display:none" class="max-w-lg mx-auto p-6">
+  <div class="flex justify-between items-center mb-6">
+    <span id="uEmail" class="text-sm bg-gray-200 px-3 py-1 rounded-full"></span>
+    <button onclick="logout()" class="text-sm underline">خروج</button>
+  </div>
+  <div id="calcArea" class="bg-white p-6 rounded-3xl shadow-xl">
+    <h2 class="font-black text-xl mb-4">دخل بياناتك</h2>
+    <input id="weight" type="number" placeholder="الوزن بالكيلو" class="w-full border-2 p-4 rounded-xl mb-4">
+    <button onclick="calculate()" class="w-full bg-black text-white py-4 rounded-xl font-black text-lg">احسب دلوقتي</button>
+    <div id="result" class="mt-6"></div>
+  </div>
+</div>
 </body>
 </html>
