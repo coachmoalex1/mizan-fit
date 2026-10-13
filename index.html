@@ -3,72 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mizan Fit - احسب سعراتك</title>
+<title>Mizan Fit</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ===== تقدر تغير دول في ثانية =====
-const SITE_PRICE = 150; // غير السعر هنا
+// ===== تحكم كامل من هنا =====
+const SITE_PRICE = 150; 
 const VODAFONE_CASH = "01032537361";
 const ADMIN_EMAIL = "mm1719087@gmail.com";
 
-// ===== حط الكونفج بتاع مشروعك هنا =====
 const firebaseConfig = {
-  apiKey: "حط الـ apiKey بتاعك هنا",
+  apiKey: "AIzaSy...",
   authDomain: "mizan-fit-e5554.firebaseapp.com",
   projectId: "mizan-fit-e5554",
   storageBucket: "mizan-fit-e5554.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  messagingSenderId: "....",
+  appId: "...."
 };
+// هات الكونفج من Firebase > Project Settings > General وبدله هنا
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-window.startCalc = async () => {
-  const result = await signInWithPopup(auth, provider);
-  const user = result.user;
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-
-  if (!snap.exists()) {
-    await setDoc(userRef, {
-      email: user.email,
-      subscribed: false,
-      calcDone: false,
-      trialStart: serverTimestamp(),
-      createdAt: serverTimestamp()
-    });
-    window.location.reload();
-    return;
-  }
-  const data = snap.data();
-  if (data.calcDone && !data.subscribed && user.email !== ADMIN_EMAIL) {
-    alert(`حسابك خلص المحاولة المجانية. حول ${SITE_PRICE}ج على ${VODAFONE_CASH} وابعتلنا الوصل على الواتساب`);
-    return;
-  }
-  // هنا تحط كود حساب السعرات بتاعك
-  alert("هنا هيبدأ حساب السعرات");
-  if (!data.calcDone) {
-    await updateDoc(userRef, { calcDone: true, plan: "trial" });
-  }
+window.loginAndCalc = async () => {
+  try {
+    const res = await signInWithPopup(auth, provider);
+    const user = res.user;
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+    if(!snap.exists()){
+      await setDoc(ref, { email: user.email, subscribed: false, calcDone: false, createdAt: serverTimestamp() });
+    } else {
+      const d = snap.data();
+      if(d.calcDone && !d.subscribed && d.email !== ADMIN_EMAIL){
+        document.getElementById('msg').innerHTML = `خلصت محاولتك المجانية. حول ${SITE_PRICE}ج على فودافون كاش ${VODAFONE_CASH} وابعت الوصل واتساب وهفتحلك الاشتراك`;
+        return;
+      }
+    }
+    alert("يبدأ حساب السعرات هنا - وده هنربطه بحاسبة السعرات بتاعتك");
+    const cur = await getDoc(ref);
+    if(!cur.data().calcDone){
+      await updateDoc(ref, { calcDone: true });
+    }
+  } catch(e){ alert(e.message); }
 }
 </script>
 </head>
-<body class="bg-gray-100 p-4">
-<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg mt-10 text-center">
-<h1 class="text-2xl font-bold mb-4">Mizan Fit</h1>
-<p class="mb-4">احسب سعراتك - مرة واحدة مجانا، بعد كده الاشتراك <span id="price"></span>ج</p>
-<button onclick="startCalc()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">احسب سعراتك بالجيميل</button>
-<p class="text-xs mt-4 text-gray-500">الأدمن: mm1719087@gmail.com</p>
+<body class="bg-gray-50 p-4">
+<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow mt-10 text-center">
+<h1 class="text-2xl font-bold">Mizan Fit - ميزان فت</h1>
+<p class="my-3">احسب سعراتك مرة مجانا، وبعد كده الاشتراك <b id="price"></b> جنيه</p>
+<button onclick="loginAndCalc()" class="w-full bg-black text-white py-3 rounded-xl">احسب سعراتك بالجيميل</button>
+<p id="msg" class="mt-4 text-red-600 font-bold"></p>
+<p class="text-xs mt-3 text-gray-400">تسجيل دخول جوجل فقط - مفيش رسائل SMS</p>
 </div>
-<script>
-document.getElementById('price').innerText = SITE_PRICE;
-</script>
+<script>document.getElementById('price').innerText=SITE_PRICE;</script>
 </body>
 </html>
