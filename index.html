@@ -3,27 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mizan Fit</title>
+<title>Mizan Fit - ميزان فت</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ===== تحكم كامل من هنا =====
-const SITE_PRICE = 150; 
+// ===== تقدر تغير دول في ثانية =====
+const SITE_PRICE = 150;
 const VODAFONE_CASH = "01032537361";
 const ADMIN_EMAIL = "mm1719087@gmail.com";
 
+// ===== الكونفج بتاعك جاهز =====
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
+  apiKey: "AIzaSyDj8ZSUwIyqZf3IMHNpYckkeTv-WSoGaHc",
   authDomain: "mizan-fit-e5554.firebaseapp.com",
   projectId: "mizan-fit-e5554",
-  storageBucket: "mizan-fit-e5554.appspot.com",
-  messagingSenderId: "....",
-  appId: "...."
+  storageBucket: "mizan-fit-e5554.firebasestorage.app",
+  messagingSenderId: "502932382370",
+  appId: "1:502932382370:web:bbf348f8a9bda1564fadfb"
 };
-// هات الكونفج من Firebase > Project Settings > General وبدله هنا
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -32,36 +32,52 @@ const provider = new GoogleAuthProvider();
 
 window.loginAndCalc = async () => {
   try {
-    const res = await signInWithPopup(auth, provider);
-    const user = res.user;
-    const ref = doc(db, "users", user.uid);
-    const snap = await getDoc(ref);
-    if(!snap.exists()){
-      await setDoc(ref, { email: user.email, subscribed: false, calcDone: false, createdAt: serverTimestamp() });
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      await setDoc(userRef, {
+        email: user.email,
+        subscribed: false,
+        calcDone: false,
+        createdAt: serverTimestamp()
+      });
     } else {
-      const d = snap.data();
-      if(d.calcDone && !d.subscribed && d.email !== ADMIN_EMAIL){
-        document.getElementById('msg').innerHTML = `خلصت محاولتك المجانية. حول ${SITE_PRICE}ج على فودافون كاش ${VODAFONE_CASH} وابعت الوصل واتساب وهفتحلك الاشتراك`;
+      const data = snap.data();
+      // لو خلص المحاولة ومش مشترك ومش انت الأدمن -> اقفله
+      if (data.calcDone &&!data.subscribed && user.email!== ADMIN_EMAIL) {
+        document.getElementById('msg').innerHTML = `خلصت محاولتك المجانية يا بطل 💪<br>حول ${SITE_PRICE}ج على فودافون كاش ${VODAFONE_CASH} وابعت الوصل واتساب وهفتحلك الاشتراك فورا`;
         return;
       }
     }
-    alert("يبدأ حساب السعرات هنا - وده هنربطه بحاسبة السعرات بتاعتك");
-    const cur = await getDoc(ref);
-    if(!cur.data().calcDone){
-      await updateDoc(ref, { calcDone: true });
+
+    // هنا هتحط حاسبة السعرات بتاعتك
+    alert("تمام! تسجيل الدخول نجح - هنا هنحط حاسبة السعرات");
+
+    const currentSnap = await getDoc(userRef);
+    if(!currentSnap.data().calcDone){
+      await updateDoc(userRef, { calcDone: true });
     }
-  } catch(e){ alert(e.message); }
+
+  } catch (e) {
+    alert("خطأ: " + e.message);
+  }
 }
 </script>
 </head>
-<body class="bg-gray-50 p-4">
-<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow mt-10 text-center">
-<h1 class="text-2xl font-bold">Mizan Fit - ميزان فت</h1>
-<p class="my-3">احسب سعراتك مرة مجانا، وبعد كده الاشتراك <b id="price"></b> جنيه</p>
-<button onclick="loginAndCalc()" class="w-full bg-black text-white py-3 rounded-xl">احسب سعراتك بالجيميل</button>
-<p id="msg" class="mt-4 text-red-600 font-bold"></p>
-<p class="text-xs mt-3 text-gray-400">تسجيل دخول جوجل فقط - مفيش رسائل SMS</p>
+<body class="bg-gray-50 p-4 font-sans">
+<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg mt-10 text-center">
+<h1 class="text-2xl font-bold mb-2">Mizan Fit</h1>
+<p class="mb-4 text-gray-600">احسب سعراتك مرة مجانا، وبعد كده الاشتراك <b id="price" class="text-black"></b> جنيه</p>
+<button onclick="loginAndCalc()" class="w-full bg-black text-white py-3 rounded-xl font-bold text-lg">احسب سعراتك بالجيميل</button>
+<p id="msg" class="mt-4 text-red-600 font-bold leading-6"></p>
+<p class="text-xs mt-4 text-gray-400">تسجيل دخول جوجل فقط - مفيش SMS - آمن 100%</p>
+<p class="text-[10px] mt-2 text-gray-300">Admin: mm1719087@gmail.com</p>
 </div>
-<script>document.getElementById('price').innerText=SITE_PRICE;</script>
+<script>
+document.getElementById('price').innerText = SITE_PRICE;
+</script>
 </body>
 </html>
