@@ -1,0 +1,65 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>حاسبة السعرات الحرارية اليومية مجانًا | ميزان فيت</title>
+<meta name="description" content="احسب سعراتك الحرارية اليومية للتخسيس أو الحفاظ على الوزن أو زيادته بمعادلة Mifflin-St Jeor. مجانًا وبالعربي من ميزان فيت.">
+<link rel="canonical" href="https://coachmoalex1.github.io/mizan-fit/calories.html"><link rel="icon" href="icon-192.png">
+<meta property="og:title" content="حاسبة السعرات الحرارية اليومية | ميزان فيت"><meta property="og:type" content="website"><meta property="og:url" content="https://coachmoalex1.github.io/mizan-fit/calories.html">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "إزاي بتتحسب السعرات الحرارية اليومية؟", "acceptedAnswer": {"@type": "Answer", "text": "بنحسب معدل الأيض الأساسي (BMR) بمعادلة Mifflin-St Jeor حسب الجنس والسن والطول والوزن، وبعدين بنضربه في معامل النشاط عشان نطلع احتياجك اليومي للحفاظ على وزنك."}}, {"@type": "Question", "name": "كام سعر حراري أنقص عشان أخس؟", "acceptedAnswer": {"@type": "Answer", "text": "التقدير العام إن نقص حوالي 15-20% من احتياج الحفاظ بيدي نزول تدريجي. ومش بننصح بأقل من 1200 سعر للستات و1500 للرجال إلا بإشراف طبيب."}}, {"@type": "Question", "name": "الحاسبة دي دقيقة 100%؟", "acceptedAnswer": {"@type": "Answer", "text": "لأ، النتيجة تقديرية وبتختلف من شخص لشخص حسب الجينات وكتلة العضلات ونوع النشاط. ابدأ بالرقم وتابع وزنك أسبوعين وعدّل."}}, {"@type": "Question", "name": "هل الحاسبة مناسبة للأطفال والحوامل؟", "acceptedAnswer": {"@type": "Answer", "text": "لأ. الحاسبة للبالغين 18 سنة فأكتر. للأطفال والمراهقين والحوامل والمرضعة وأصحاب الأمراض المزمنة استشر الطبيب."}}]}</script>
+<style>:root{--bg:#0e1a16;--card:#1c3029;--gold:#7fd1ae;--cream:#eef7f1;--mute:#a9c4b6}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--cream);font-family:'Cairo',system-ui,sans-serif;line-height:1.9;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+main{max-width:720px;margin:0 auto;padding:18px 16px 48px}
+h1{font-size:24px;color:var(--gold);margin:8px 0}h2{font-size:19px;color:var(--gold);margin:28px 0 6px}h3{font-size:16px;margin:16px 0 0}
+p,li{font-size:15.5px}.mute{color:var(--mute);font-size:14px}a{color:var(--gold)}
+.card{background:var(--card);border-radius:14px;padding:14px 16px;margin-top:14px}
+label{display:block;font-weight:700;margin:10px 0 4px;font-size:14px}
+input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #2f4a40;background:#10211b;color:var(--cream);font:inherit;font-size:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{width:100%;margin-top:14px;padding:14px;border:0;border-radius:12px;background:var(--gold);color:#0b1612;font:inherit;font-weight:800;font-size:16px;cursor:pointer}
+#res{display:none}.big{font-size:34px;font-weight:800;color:var(--gold);line-height:1.3}
+table{width:100%;border-collapse:collapse;margin-top:8px}td{padding:8px 4px;border-bottom:1px solid #2f4a40;font-size:15px}td:last-child{text-align:left;font-weight:700}
+.warn{border:1px solid #c9a24a;color:#f2dfae;border-radius:10px;padding:10px 12px;margin-top:12px;font-size:14px;display:none}
+.cta{display:block;text-align:center;margin-top:14px;padding:13px;border-radius:12px;border:1px solid var(--gold);text-decoration:none;font-weight:800}</style></head>
+<body><main>
+<a href="./" style="font-weight:700;text-decoration:none">← ميزان فيت</a>
+<h1>حاسبة السعرات الحرارية اليومية</h1>
+<p class="mute">احسب احتياجك من السعرات للتخسيس أو الحفاظ على الوزن أو زيادته. مجانًا، ومن غير تسجيل، وبياناتك مش بتتحفظ. للبالغين 18 سنة فأكتر.</p>
+<div class="card">
+<div class="row"><div><label for="sex">الجنس</label><select id="sex"><option value="m">ذكر</option><option value="f">أنثى</option></select></div>
+<div><label for="age">السن (18-80)</label><input id="age" type="number" inputmode="numeric" min="18" max="80" placeholder="مثلًا 30"></div></div>
+<div class="row"><div><label for="h">الطول (سم)</label><input id="h" type="number" inputmode="decimal" placeholder="مثلًا 170"></div>
+<div><label for="w">الوزن (كجم)</label><input id="w" type="number" inputmode="decimal" placeholder="مثلًا 75"></div></div>
+<label for="act">مستوى النشاط</label>
+<select id="act"><option value="1.2">قليل الحركة (شغل مكتبي، تمرين نادر)</option><option value="1.375">خفيف (تمرين 1-3 أيام في الأسبوع)</option><option value="1.55" selected>متوسط (تمرين 3-5 أيام)</option><option value="1.725">عالي (تمرين 6-7 أيام)</option><option value="1.9">عالي جدًا (مجهود بدني شاق يوميًا)</option></select>
+<button id="go" type="button">احسب</button>
+<div class="warn" id="warn"></div></div>
+<div class="card" id="res"><p class="mute" style="margin:0">احتياجك للحفاظ على وزنك</p><div class="big"><span id="maint"></span> <span style="font-size:16px">سعر/يوم</span></div>
+<table><tr><td>معدل الأيض الأساسي (BMR)</td><td id="bmr"></td></tr><tr><td>تخسيس تدريجي (-15%)</td><td id="cut"></td></tr><tr><td>تخسيس أسرع (-20%)</td><td id="cut2"></td></tr><tr><td>زيادة وزن بسيطة (+10%)</td><td id="gain"></td></tr><tr><td>كتلة الجسم BMI</td><td id="bmi"></td></tr></table>
+<p class="mute">الأرقام تقديرية. ابدأ بالرقم، وتابع وزنك أسبوعين، وعدّل حسب النتيجة.</p>
+<a class="cta" href="./">تابع أكلك ووزنك يوميًا في ميزان فيت ←</a></div>
+<h2>إزاي بتتحسب السعرات؟</h2>
+<p>بنستخدم معادلة Mifflin-St Jeor لحساب معدل الأيض الأساسي (BMR)، وهو اللي جسمك بيحرقه وهو في الراحة. بعدين بنضربه في معامل النشاط لنطلع احتياجك اليومي (TDEE). لو عايز تخس بنقص نسبة بسيطة من الرقم ده، ولو عايز تزيد بنزوّد نسبة بسيطة.</p>
+<h2>أسئلة شائعة</h2><h3>إزاي بتتحسب السعرات الحرارية اليومية؟</h3><p>بنحسب معدل الأيض الأساسي (BMR) بمعادلة Mifflin-St Jeor حسب الجنس والسن والطول والوزن، وبعدين بنضربه في معامل النشاط عشان نطلع احتياجك اليومي للحفاظ على وزنك.</p><h3>كام سعر حراري أنقص عشان أخس؟</h3><p>التقدير العام إن نقص حوالي 15-20% من احتياج الحفاظ بيدي نزول تدريجي. ومش بننصح بأقل من 1200 سعر للستات و1500 للرجال إلا بإشراف طبيب.</p><h3>الحاسبة دي دقيقة 100%؟</h3><p>لأ، النتيجة تقديرية وبتختلف من شخص لشخص حسب الجينات وكتلة العضلات ونوع النشاط. ابدأ بالرقم وتابع وزنك أسبوعين وعدّل.</p><h3>هل الحاسبة مناسبة للأطفال والحوامل؟</h3><p>لأ. الحاسبة للبالغين 18 سنة فأكتر. للأطفال والمراهقين والحوامل والمرضعة وأصحاب الأمراض المزمنة استشر الطبيب.</p>
+<p class="mute" style="margin-top:24px">المحتوى للتوعية وليس بديلًا عن الطبيب. لو عندك مرض مزمن أو حامل أو مرضعة أو بتاخد أدوية، استشر طبيبك قبل أي تغيير في أكلك. · <a href="privacy.html">الخصوصية</a> · <a href="terms.html">الشروط</a></p>
+</main>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+$('go').addEventListener('click',function(){
+ var sex=$('sex').value,a=+$('age').value,h=+$('h').value,w=+$('w').value,act=+$('act').value,wn=$('warn');
+ wn.style.display='none';$('res').style.display='none';
+ if(!(a>=18&&a<=80)){wn.textContent='الحاسبة للبالغين من 18 لـ 80 سنة. للأطفال والمراهقين استشر طبيب التغذية.';wn.style.display='block';return}
+ if(!(h>=120&&h<=230&&w>=30&&w<=300)){wn.textContent='راجع الطول (120-230 سم) والوزن (30-300 كجم).';wn.style.display='block';return}
+ var bmr=10*w+6.25*h-5*a+(sex==='m'?5:-161),t=bmr*act,min=sex==='m'?1500:1200;
+ var bmi=w/Math.pow(h/100,2),r=function(x){return Math.round(x/10)*10};
+ var cut=Math.max(t*0.85,min),cut2=Math.max(t*0.8,min);
+ $('bmr').textContent=r(bmr);$('maint').textContent=r(t);
+ $('cut').textContent=r(cut);$('cut2').textContent=r(cut2);$('gain').textContent=r(t*1.1);$('bmi').textContent=bmi.toFixed(1);
+ var msg='';
+ if(bmi<18.5)msg='وزنك أقل من الطبيعي (BMI أقل من 18.5). مش بننصح بنظام تخسيس، وراجع طبيب أو أخصائي تغذية.';
+ else if(t*0.8<min)msg='تم تثبيت أقل حد آمن ('+min+' سعر). ما تنزلش عنه إلا بإشراف طبيب.';
+ if(msg){wn.textContent=msg;wn.style.display='block'}
+ $('res').style.display='block';$('res').scrollIntoView({behavior:'smooth',block:'start'});
+});
+})();
+</script></body></html>

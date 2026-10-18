@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://coachmoalex1.github.io/mizan-fit/sitemap.xml
